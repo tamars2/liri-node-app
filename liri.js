@@ -10,31 +10,43 @@ var keys = require("./keys.js");
 var inputCommand = process.argv[2];
 var title = process.argv[3];
 
-//conditional for user input command
-if (inputCommand === "my-tweets") {
-	//set twitter keys to acces api
+switch(inputCommand) {
+	case "my-tweets":
+		myTweets();
+		break;
+	case "spotify-this-song":
+		spotifySearch(title);
+		break;
+	case "movie-this":
+		movieSearch(title);
+		break;
+	case "do-what-it-says":
+		doWhatItSays();
+		break;
+}
+
+function myTweets() {
 	var client = new twitter({
 		consumer_key: keys.twitterKeys.consumer_key,
 		consumer_secret: keys.twitterKeys.consumer_secret,
 		access_token_key: keys.twitterKeys.access_token_key,
 		access_token_secret: keys.twitterKeys.access_token_secret
-	});
-	//default screen name to search 
-	var params = {screen_name: 'alecbaldwin'};
-	client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  		if (!error) {
-  			for (var i = 0; i < 20; i++){
-  				var tweet = tweets[i].text + "\r\n" + "Tweeted on: " + tweets[i].created_at + "\r\n" + "===================================" + "\r\n";
-    			// console.log(tweets[i].text + "\r\n" + "Tweeted on: " + tweets[i].created_at + "\r\n" + "===================================" + "\r\n");
-    			console.log(tweet);
-    			writeText(tweet);
-    		}
-  		}
-	});
+		});
+		//default screen name to search 
+		var params = {screen_name: 'alecbaldwin'};
+		client.get('statuses/user_timeline', params, function(error, tweets, response) {
+  			if (!error) {
+  				for (var i = 0; i < 20; i++){
+  					var tweet = tweets[i].text + "\r\n" + "Tweeted on: " + tweets[i].created_at + "\r\n" + "===================================" + "\r\n";
+    				// console.log(tweets[i].text + "\r\n" + "Tweeted on: " + tweets[i].created_at + "\r\n" + "===================================" + "\r\n");
+    				console.log(tweet);
+    				writeText(tweet);
+    			}
+  			}
+		});
 }
 
-else if (inputCommand === "spotify-this-song") {
-	//if title is empty, default to the sign
+function spotifySearch(title) {
 	if (!title) {
    		title = "ace of base - the sign";
    		console.log(title);
@@ -58,16 +70,10 @@ else if (inputCommand === "spotify-this-song") {
    			}
    		}
    	});
-     
 }
 
-else if (inputCommand === "movie-this") {
-	//if title is empty, default to Mr. Nobody
-	
-	// function movieFunction(title){
-
-	// }
-
+//OMDB search function
+function movieSearch(title) {
 	if (!title) {
    				title = "Mr. Nobody";
    	}
@@ -89,13 +95,17 @@ else if (inputCommand === "movie-this") {
   			writeText("\r\n ////////// \r\n" + movieInfo + "\r\n //////////");
  		}
 	});
-
 }
 
-else {
-	console.log("Please make a choice: my-tweets / spotify-this-song / movie-this");
+//do what it says to read random.txt and perform spotify search with data from the txt file
+function doWhatItSays() {
+	fs.readFile('random.txt', 'utf8', function(error, data){
+		var dataArr = data.split(",");
+		console.log(dataArr[1]);
+		spotifySearch(dataArr[1]);
+	})
 }
-
+//BONUS append every succesful query to log.txt
 function writeText(input) {
 	fs.appendFile('log.txt', input, function(err) {
 		if(err) {
@@ -103,3 +113,5 @@ function writeText(input) {
 		}
 	});
 }
+
+
