@@ -1,4 +1,4 @@
-// require npm
+// require npm packages for use in functions
 var fs = require("fs");
 var request = require("request");
 var twitter = require("twitter");
@@ -12,14 +12,14 @@ var title = process.argv[3];
 
 //conditional for user input command
 if (inputCommand === "my-tweets") {
-	// var client = new twitter(keys.twitterKeys);
+	//set twitter keys to acces api
 	var client = new twitter({
 		consumer_key: keys.twitterKeys.consumer_key,
 		consumer_secret: keys.twitterKeys.consumer_secret,
 		access_token_key: keys.twitterKeys.access_token_key,
 		access_token_secret: keys.twitterKeys.access_token_secret
 	});
- 
+	//default screen name to search 
 	var params = {screen_name: 'alecbaldwin'};
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
   		if (!error) {
@@ -63,27 +63,32 @@ else if (inputCommand === "spotify-this-song") {
 
 else if (inputCommand === "movie-this") {
 	//if title is empty, default to Mr. Nobody
+	
+	// function movieFunction(title){
+
+	// }
+
 	if (!title) {
    				title = "Mr. Nobody";
    	}
    	//call the api referencing user input movie title
     request("http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json", function(error, response, body) {
- 	// If there were no errors
-	if (!error && response.statusCode === 200) {
-	//store OMDB JSON data to variable
-  	var movieInfo = "Title: " + JSON.parse(body).Title + "\r\n" + 
-  					"Year: " + JSON.parse(body).Year + "\r\n" +
-  					"Rating: " + JSON.parse(body).imdbRating + "\r\n" +
-  					"Country: " + JSON.parse(body).Country +  "\r\n" +
-  					"Language: " +JSON.parse(body).Language + "\r\n" +
-  					"Plot: " + JSON.parse(body).Plot + "\r\n" +
-  					"Actors: " +JSON.parse(body).Actors + "\r\n" +
-  					"Rotten Tomatoes Rating: " +JSON.parse(body).Ratings[1].Value;
-  					//log to screen
-  					console.log(movieInfo);
-				  	writeText(movieInfo);
-  	}
-});
+ 		// If there were no errors
+		if (!error && response.statusCode === 200) {
+			//store OMDB JSON data to variable
+  			var movieInfo = "Title: " + JSON.parse(body).Title + "\r\n" + 
+  							"Year: " + JSON.parse(body).Year + "\r\n" +
+  							"Rating: " + JSON.parse(body).imdbRating + "\r\n" +
+  							"Country: " + JSON.parse(body).Country +  "\r\n" +
+  							"Language: " +JSON.parse(body).Language + "\r\n" +
+  							"Plot: " + JSON.parse(body).Plot + "\r\n" +
+  							"Actors: " +JSON.parse(body).Actors + "\r\n" +
+  							"Rotten Tomatoes Rating: " +JSON.parse(body).Ratings[1].Value;
+  			//log to screen
+  			console.log(movieInfo);
+  			writeText("\r\n ////////// \r\n" + movieInfo + "\r\n //////////");
+ 		}
+	});
 
 }
 
@@ -97,4 +102,4 @@ function writeText(input) {
 			console.log(err);
 		}
 	});
-} 
+}
